@@ -1,0 +1,15 @@
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.exe.config
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.exe.config
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.exe
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Imaging.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Imaging.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Imaging.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.vbprojResolveAssemblyReference.cache
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.Resources.resources
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.vbproj.GenerateResource.Cache
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.exe
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.gui_form.resources
