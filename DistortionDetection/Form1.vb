@@ -1,9 +1,11 @@
 ﻿Imports Bwl.Imaging
 Imports System.Threading
+Imports Bwl.Framework
 
 Public Class gui_form
 
     Dim imageHandler As ImageHandler
+    Dim lform As LoggerForm
 
     Private Sub loadImage_btn_Click(sender As Object, e As EventArgs) Handles loadImage_btn.Click
         If Not imageHandler.stopCalculations() Then
@@ -81,6 +83,8 @@ Public Class gui_form
     Private Sub gui_form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         imageHandler = New ImageHandler()
         sourceImg_pb.Image = imageHandler._sourceImg
+        lform = New LoggerForm(imageHandler._logger)
+        lform.Show()
         'resultImg_pb.Image = imageHandler._resImg;
         AddHandler imageHandler.resImgChanged, AddressOf imageHandler_resImgChanged
 
