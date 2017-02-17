@@ -6,6 +6,7 @@ Public Class gui_form
 
     Dim imageHandler As ImageHandler
     Dim lform As LoggerForm
+    Dim sform As FormSettings
 
     Private Sub loadImage_btn_Click(sender As Object, e As EventArgs) Handles loadImage_btn.Click
         If Not imageHandler.stopCalculations() Then
@@ -78,9 +79,13 @@ Public Class gui_form
         lform.Height = 200
         lform.FormBorderStyle = FormBorderStyle.None
         lform.Show()
-
+        sform = New FormSettings()
 
         AddHandler imageHandler.resImgChanged, AddressOf imageHandler_resImgChanged
 
+    End Sub
+
+    Private Sub Settings_Click(sender As Object, e As EventArgs) Handles Settings.Click
+        sform.Show()
     End Sub
 End Class

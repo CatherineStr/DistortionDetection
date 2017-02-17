@@ -16,3 +16,4 @@ C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Framework.dll
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Framework.pdb
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Framework.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.FormSettings.resources

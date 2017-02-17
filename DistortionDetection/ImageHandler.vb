@@ -77,11 +77,11 @@ Public Class ImageHandler
         Dim grayMatrix = BitmapConverter.BitmapToGrayMatrix(sourceImg)
 
         logger.AddMessage("Обнаружение границ")
-        Dim edgeGrayMatrix = detectEdges(grayMatrix, 2)
+        Dim edgeGrayMatrix = detectEdges(grayMatrix, My.Settings.pixAreaWidth)
         _resImg = edgeGrayMatrix.ToRGBMatrix.ToBitmap
 
         logger.AddMessage("Поиск вертикальных линий")
-        Dim vertLinesAr = searchVertLines(edgeGrayMatrix, sourceImg.Height / 10, 5)
+        Dim vertLinesAr = searchVertLines(edgeGrayMatrix, My.Settings.lineMinLen, My.Settings.maxGapY)
 
         Dim temp_resImg = New Bitmap(sourceImg)
         Dim g = Graphics.FromImage(temp_resImg)

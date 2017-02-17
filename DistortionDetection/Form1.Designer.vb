@@ -27,6 +27,7 @@ Partial Class gui_form
         Me.Save_btn = New System.Windows.Forms.Button()
         Me.searchDistortion_btn = New System.Windows.Forms.Button()
         Me.loadImage_btn = New System.Windows.Forms.Button()
+        Me.Settings = New System.Windows.Forms.Button()
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -59,7 +60,7 @@ Partial Class gui_form
         Me.Save_btn.Location = New System.Drawing.Point(590, 11)
         Me.Save_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.Save_btn.Name = "Save_btn"
-        Me.Save_btn.Size = New System.Drawing.Size(161, 34)
+        Me.Save_btn.Size = New System.Drawing.Size(161, 41)
         Me.Save_btn.TabIndex = 13
         Me.Save_btn.Text = "Сохранить результат"
         Me.Save_btn.UseVisualStyleBackColor = True
@@ -67,10 +68,10 @@ Partial Class gui_form
         'searchDistortion_btn
         '
         Me.searchDistortion_btn.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.searchDistortion_btn.Location = New System.Drawing.Point(182, 13)
+        Me.searchDistortion_btn.Location = New System.Drawing.Point(421, 11)
         Me.searchDistortion_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.searchDistortion_btn.Name = "searchDistortion_btn"
-        Me.searchDistortion_btn.Size = New System.Drawing.Size(161, 34)
+        Me.searchDistortion_btn.Size = New System.Drawing.Size(161, 41)
         Me.searchDistortion_btn.TabIndex = 12
         Me.searchDistortion_btn.Text = "Найти искажения"
         Me.searchDistortion_btn.UseVisualStyleBackColor = True
@@ -81,16 +82,28 @@ Partial Class gui_form
         Me.loadImage_btn.Location = New System.Drawing.Point(13, 13)
         Me.loadImage_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.loadImage_btn.Name = "loadImage_btn"
-        Me.loadImage_btn.Size = New System.Drawing.Size(161, 34)
+        Me.loadImage_btn.Size = New System.Drawing.Size(161, 39)
         Me.loadImage_btn.TabIndex = 11
         Me.loadImage_btn.Text = "Загрузить изображение"
         Me.loadImage_btn.UseVisualStyleBackColor = True
+        '
+        'Settings
+        '
+        Me.Settings.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.Settings.Location = New System.Drawing.Point(252, 11)
+        Me.Settings.Margin = New System.Windows.Forms.Padding(4)
+        Me.Settings.Name = "Settings"
+        Me.Settings.Size = New System.Drawing.Size(161, 41)
+        Me.Settings.TabIndex = 16
+        Me.Settings.Text = "Настроить пареметры обработки изображения"
+        Me.Settings.UseVisualStyleBackColor = True
         '
         'gui_form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1172, 703)
+        Me.Controls.Add(Me.Settings)
         Me.Controls.Add(Me.Save_btn)
         Me.Controls.Add(Me.searchDistortion_btn)
         Me.Controls.Add(Me.loadImage_btn)
@@ -109,5 +122,6 @@ Partial Class gui_form
     Private WithEvents Save_btn As System.Windows.Forms.Button
     Private WithEvents searchDistortion_btn As System.Windows.Forms.Button
     Private WithEvents loadImage_btn As System.Windows.Forms.Button
+    Private WithEvents Settings As System.Windows.Forms.Button
 
 End Class
