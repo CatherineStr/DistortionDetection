@@ -38,7 +38,7 @@ Public Class gui_form
     End Sub
 
     Private Sub searchDistortion_btn_Click(sender As Object, e As EventArgs) Handles searchDistortion_btn.Click
-        result_rtb.Text = ""
+        'result_rtb.Text = ""
         imageHandler.detectDistortions()
     End Sub
 
@@ -64,19 +64,8 @@ Public Class gui_form
         End Using
     End Sub
 
-    Private Delegate Sub SetRTBTextCallback(text As String, rtb As RichTextBox)
-    Private Sub SetRTBText(text As String, rtb As RichTextBox)
-        If result_rtb.InvokeRequired Then
-            Dim txtCallback As New SetRTBTextCallback(AddressOf SetRTBText)
-            Me.Invoke(New SetRTBTextCallback(AddressOf SetRTBText), New Object() {text, rtb})
-        Else
-            result_rtb.Text = result_rtb.Text + text
-        End If
-    End Sub
-
     Private Sub imageHandler_resImgChanged(ByVal sender As Object, ByVal e As EventArgs)
         resultImg_pb.Image = imageHandler._resImg
-        SetRTBText(imageHandler._output, result_rtb)
 
     End Sub
 
@@ -84,8 +73,13 @@ Public Class gui_form
         imageHandler = New ImageHandler()
         sourceImg_pb.Image = imageHandler._sourceImg
         lform = New LoggerForm(imageHandler._logger)
+        lform.MdiParent = Me
+        lform.Dock = DockStyle.Bottom
+        lform.Height = 200
+        lform.FormBorderStyle = FormBorderStyle.None
         lform.Show()
-        'resultImg_pb.Image = imageHandler._resImg;
+
+
         AddHandler imageHandler.resImgChanged, AddressOf imageHandler_resImgChanged
 
     End Sub

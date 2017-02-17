@@ -9,11 +9,7 @@ Public Class ImageHandler
     Private resImg As Bitmap = Nothing
     Dim filters As New Filters
     Dim calcThread As Threading.Thread = Nothing
-    Dim output As String
     Dim logger As New Logger
-    Dim datagridLogWriter As New DatagridLogWriter
-
-
 
     Public Property _sourceImg() As Bitmap
         Get
@@ -34,18 +30,6 @@ Public Class ImageHandler
                 OnResImgChanged(New PropertyChangedEventArgs("_resImg"))
             End If
         End Set
-    End Property
-
-    Public ReadOnly Property _output() As String
-        Get
-            Return output
-        End Get
-    End Property
-
-    Public ReadOnly Property _datagridLogWriter() As DatagridLogWriter
-        Get
-            Return datagridLogWriter
-        End Get
     End Property
 
     Public ReadOnly Property _logger() As Logger
@@ -90,16 +74,13 @@ Public Class ImageHandler
 
     Private Sub calculate()
         logger.AddMessage("Получение матрицы изображения в оттенках серого")
-        output = DateTime.Now + vbTab + "Получение матрицы изображения в оттенках серого" + vbCrLf
         Dim grayMatrix = BitmapConverter.BitmapToGrayMatrix(sourceImg)
 
         logger.AddMessage("Обнаружение границ")
-        output += DateTime.Now + vbTab + "Обнаружение границ" + vbCrLf
         Dim edgeGrayMatrix = detectEdges(grayMatrix, 2)
         _resImg = edgeGrayMatrix.ToRGBMatrix.ToBitmap
 
         logger.AddMessage("Поиск вертикальных линий")
-        output = DateTime.Now + vbTab + "Поиск вертикальных линий" + vbCrLf
         Dim vertLinesAr = searchVertLines(edgeGrayMatrix, sourceImg.Height / 10, 5)
 
         Dim temp_resImg = New Bitmap(sourceImg)
@@ -107,15 +88,12 @@ Public Class ImageHandler
         Dim maxDevFromStraight(vertLinesAr.Length) As Double
 
         logger.AddMessage("Расчет отклонений вертикальных линий от прямых")
-        output += DateTime.Now + vbTab + "Расчет отклонений вертикальных линий от прямых" + vbCrLf + vbCrLf
         For i As Integer = 0 To vertLinesAr.Length - 1
             g.DrawPolygon(New Pen(Color.Red, 1), vertLinesAr(i))
             maxDevFromStraight(i) = calcMaxDevFromStraight(vertLinesAr(i))
-            logger.AddInformation("Линия № " + (i + 1).ToString + "X = " + vertLinesAr(i)(0).X.ToString + "max отклонение: " + maxDevFromStraight(i).ToString)
-            output += "Линия № " + (i + 1).ToString + vbTab + "X = " + vertLinesAr(i)(0).X.ToString + vbTab + vbTab + "max отклонение: " + maxDevFromStraight(i).ToString + vbCrLf
+            logger.AddInformation("Линия № " + (i + 1).ToString + "X = " + vertLinesAr(i)(0).X.ToString + " max отклонение: " + maxDevFromStraight(i).ToString)
         Next i
         logger.AddInformation("Среднее отклонение от прямой: " + Math.Round(maxDevFromStraight.Average()).ToString)
-        output += vbCrLf + DateTime.Now + vbTab + "Среднее отклонение от прямой: " + Math.Round(maxDevFromStraight.Average(), 3).ToString
         _resImg = temp_resImg
     End Sub
 

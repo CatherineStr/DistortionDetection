@@ -22,8 +22,6 @@ Partial Class gui_form
     'Не изменяйте ее в редакторе исходного кода.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Output_lbl = New System.Windows.Forms.Label()
-        Me.result_rtb = New System.Windows.Forms.RichTextBox()
         Me.resultImg_pb = New System.Windows.Forms.PictureBox()
         Me.sourceImg_pb = New System.Windows.Forms.PictureBox()
         Me.Save_btn = New System.Windows.Forms.Button()
@@ -32,27 +30,6 @@ Partial Class gui_form
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'Output_lbl
-        '
-        Me.Output_lbl.AutoSize = True
-        Me.Output_lbl.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.Output_lbl.Location = New System.Drawing.Point(10, 546)
-        Me.Output_lbl.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Output_lbl.Name = "Output_lbl"
-        Me.Output_lbl.Size = New System.Drawing.Size(50, 17)
-        Me.Output_lbl.TabIndex = 10
-        Me.Output_lbl.Text = "Вывод"
-        '
-        'result_rtb
-        '
-        Me.result_rtb.Location = New System.Drawing.Point(10, 566)
-        Me.result_rtb.Margin = New System.Windows.Forms.Padding(4)
-        Me.result_rtb.Name = "result_rtb"
-        Me.result_rtb.ReadOnly = True
-        Me.result_rtb.Size = New System.Drawing.Size(1148, 130)
-        Me.result_rtb.TabIndex = 9
-        Me.result_rtb.Text = ""
         '
         'resultImg_pb
         '
@@ -117,20 +94,16 @@ Partial Class gui_form
         Me.Controls.Add(Me.Save_btn)
         Me.Controls.Add(Me.searchDistortion_btn)
         Me.Controls.Add(Me.loadImage_btn)
-        Me.Controls.Add(Me.Output_lbl)
-        Me.Controls.Add(Me.result_rtb)
         Me.Controls.Add(Me.resultImg_pb)
         Me.Controls.Add(Me.sourceImg_pb)
+        Me.IsMdiContainer = True
         Me.Name = "gui_form"
         Me.Text = "Distortion detection"
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
-    Private WithEvents Output_lbl As System.Windows.Forms.Label
-    Private WithEvents result_rtb As System.Windows.Forms.RichTextBox
     Private WithEvents resultImg_pb As System.Windows.Forms.PictureBox
     Private WithEvents sourceImg_pb As System.Windows.Forms.PictureBox
     Private WithEvents Save_btn As System.Windows.Forms.Button
