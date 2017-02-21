@@ -28,6 +28,7 @@ Partial Class gui_form
         Me.searchDistortion_btn = New System.Windows.Forms.Button()
         Me.loadImage_btn = New System.Windows.Forms.Button()
         Me.Settings = New System.Windows.Forms.Button()
+        Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -57,7 +58,7 @@ Partial Class gui_form
         'Save_btn
         '
         Me.Save_btn.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.Save_btn.Location = New System.Drawing.Point(590, 11)
+        Me.Save_btn.Location = New System.Drawing.Point(998, 13)
         Me.Save_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.Save_btn.Name = "Save_btn"
         Me.Save_btn.Size = New System.Drawing.Size(161, 41)
@@ -68,7 +69,7 @@ Partial Class gui_form
         'searchDistortion_btn
         '
         Me.searchDistortion_btn.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.searchDistortion_btn.Location = New System.Drawing.Point(421, 11)
+        Me.searchDistortion_btn.Location = New System.Drawing.Point(590, 11)
         Me.searchDistortion_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.searchDistortion_btn.Name = "searchDistortion_btn"
         Me.searchDistortion_btn.Size = New System.Drawing.Size(161, 41)
@@ -98,11 +99,21 @@ Partial Class gui_form
         Me.Settings.Text = "Настроить пареметры обработки изображения"
         Me.Settings.UseVisualStyleBackColor = True
         '
+        'ComboBox1
+        '
+        Me.ComboBox1.FormattingEnabled = True
+        Me.ComboBox1.Items.AddRange(New Object() {"Выделение границ: СКО", "Бинаризация: Метод Otsu "})
+        Me.ComboBox1.Location = New System.Drawing.Point(420, 11)
+        Me.ComboBox1.Name = "ComboBox1"
+        Me.ComboBox1.Size = New System.Drawing.Size(163, 21)
+        Me.ComboBox1.TabIndex = 18
+        '
         'gui_form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1172, 703)
+        Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.Settings)
         Me.Controls.Add(Me.Save_btn)
         Me.Controls.Add(Me.searchDistortion_btn)
@@ -123,5 +134,6 @@ Partial Class gui_form
     Private WithEvents searchDistortion_btn As System.Windows.Forms.Button
     Private WithEvents loadImage_btn As System.Windows.Forms.Button
     Private WithEvents Settings As System.Windows.Forms.Button
+    Friend WithEvents ComboBox1 As System.Windows.Forms.ComboBox
 
 End Class

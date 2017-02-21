@@ -10,6 +10,9 @@ Public Class ImageHandler
     Dim filters As New Filters
     Dim calcThread As Threading.Thread = Nothing
     Dim logger As New Logger
+    Dim grayMatrix As GrayMatrix = Nothing
+    Dim threshold As Integer = 0
+
 
     Public Property _sourceImg() As Bitmap
         Get
@@ -46,7 +49,6 @@ Public Class ImageHandler
     End Sub
     Public Event resImgChanged As EventHandler
 
-
     Public Function stopCalculations() As Boolean
         If calcThread Is Nothing Then
             Return True
@@ -63,21 +65,30 @@ Public Class ImageHandler
         Return True
     End Function
 
-    Public Sub detectDistortions()
+    Public Sub detectDistortions(sd As Boolean, otsu As Boolean)
         If Not Me.stopCalculations() Then
             Return
         End If
         'result_rtb.Text = "";
+        Me.sd = sd
+        Me.ots = otsu
         calcThread = New Thread(AddressOf calculate)
         calcThread.Start()
     End Sub
 
+    Dim sd As Boolean
+    Dim ots As Boolean
     Private Sub calculate()
         logger.AddMessage("Получение матрицы изображения в оттенках серого")
-        Dim grayMatrix = BitmapConverter.BitmapToGrayMatrix(sourceImg)
+        grayMatrix = BitmapConverter.BitmapToGrayMatrix(sourceImg)
+
 
         logger.AddMessage("Обнаружение границ")
-        Dim edgeGrayMatrix = detectEdges(grayMatrix, My.Settings.pixAreaWidth)
+        Dim edgeGrayMatrix As GrayMatrix
+        If ots Then
+            edgeGrayMatrix = otsu()
+        Else : edgeGrayMatrix = detectEdges(grayMatrix, My.Settings.pixAreaWidth)
+        End If
         _resImg = edgeGrayMatrix.ToRGBMatrix.ToBitmap
 
         logger.AddMessage("Поиск вертикальных линий")
@@ -97,6 +108,47 @@ Public Class ImageHandler
         _resImg = temp_resImg
     End Sub
 
+    Private Function otsu() As GrayMatrix
+        If grayMatrix Is Nothing Then
+            Return Nothing
+        End If
+        Dim bs = filters.GetBrightnessStats(grayMatrix)
+
+        Dim alpha As Integer, beta As Integer, m As Integer, n As Integer, threshold As Integer = 0
+        Dim sigma As Double, maxSigma As Double = -1
+        Dim w1, a As Double
+
+        For t As Integer = 0 To bs.Histogram.Length - 1
+            m += t * bs.Histogram(t)
+            n += bs.Histogram(t)
+        Next t
+
+        For t As Integer = 0 To bs.Histogram.Length - 1
+            alpha += t * bs.Histogram(t)
+            beta += bs.Histogram(t)
+
+            w1 = CDbl(beta) / m
+            a = CDbl(alpha) / beta - CDbl(m - alpha) / (n - beta)
+            sigma = w1 * (1 - w1) * a * a
+
+            If sigma > maxSigma Then
+                maxSigma = sigma
+                threshold = t
+            End If
+        Next t
+
+        Dim edgeArray = grayMatrix.Gray
+        For y As Integer = 0 To grayMatrix.Height - 1
+            For x As Integer = 0 To grayMatrix.Width - 1
+                If edgeArray(x, y) > threshold Then
+                    edgeArray(x, y) = Byte.MinValue
+                Else : edgeArray(x, y) = Byte.MaxValue
+                End If
+            Next x
+        Next y
+        Return New GrayMatrix(edgeArray)
+    End Function
+
     Private Function searchVertLines(edgeGrayMatrix As GrayMatrix, minLength As Integer, maxGapY As Integer) As PointF()()
         '	Массив пройденных точек: 
         '	0 - точка не рассмотрена
@@ -106,6 +158,7 @@ Public Class ImageHandler
         Dim edgeArray = edgeGrayMatrix.Gray
 
         Dim edgeBrStats = filters.GetBrightnessStats(edgeGrayMatrix)
+        threshold = edgeBrStats.BrAvg
 
         Dim pointList = New List(Of PointF)
         Dim vertLines = New List(Of PointF())
@@ -116,7 +169,7 @@ Public Class ImageHandler
                     Continue For
                 End If
 
-                If edgeArray(x, y) <= edgeBrStats.BrAvg Then
+                If edgeArray(x, y) <= threshold Then
                     checkedPoints(x, y) = 1
                     Continue For
                 End If
@@ -124,7 +177,7 @@ Public Class ImageHandler
                 'Проход по x вперёд в поисках точки с большей яркостью, чем текущая
                 Dim _x As Integer
                 For _x = x + 1 To edgeGrayMatrix.Width - 1
-                    If edgeArray(_x, y) > edgeBrStats.BrAvg Then
+                    If edgeArray(_x, y) > threshold Then
                         If y > 0 Then
                             If checkedPoints(_x, y - 1) = 1 Then
                                 checkedPoints(_x, y) = 1
@@ -133,7 +186,7 @@ Public Class ImageHandler
                         End If
 
                         If y < edgeGrayMatrix.Height - 1 Then
-                            If edgeArray(_x, y + 1) <= edgeBrStats.BrAvg Then
+                            If edgeArray(_x, y + 1) <= threshold Then
                                 edgeArray(_x, y + 1) = 1
                                 checkedPoints(_x, y) = 1
                                 Exit For
@@ -160,9 +213,9 @@ Public Class ImageHandler
                         Exit For
                     End If
                     If _x > 0 And _x < edgeGrayMatrix.Width - 1 Then
-                        If edgeArray(_x, _y) > edgeBrStats.BrAvg And
-                            edgeArray(_x + 1, _y) > edgeBrStats.BrAvg And
-                            edgeArray(_x - 1, _y) <= edgeBrStats.BrAvg Then
+                        If edgeArray(_x, _y) > threshold And
+                            edgeArray(_x + 1, _y) > threshold And
+                            edgeArray(_x - 1, _y) <= threshold Then
                             pointList.Add(New PointF(_x + 1, _y))
                             If checkedPoints(_x + 1, _y) = 0 Then
                                 checkedPoints(_x + 1, _y) = 1
@@ -171,9 +224,9 @@ Public Class ImageHandler
                             Continue For
                         End If
 
-                        If edgeArray(_x, _y) > edgeBrStats.BrAvg And
-                            edgeArray(_x - 1, _y) > edgeBrStats.BrAvg And
-                            edgeArray(_x + 1, _y) <= edgeBrStats.BrAvg Then
+                        If edgeArray(_x, _y) > threshold And
+                            edgeArray(_x - 1, _y) > threshold And
+                            edgeArray(_x + 1, _y) <= threshold Then
                             pointList.Add(New PointF(_x - 1, _y))
                             If checkedPoints(_x - 1, _y) = 0 Then
                                 checkedPoints(_x - 1, _y) = 1
@@ -182,8 +235,8 @@ Public Class ImageHandler
                             Continue For
                         End If
 
-                        If edgeArray(_x + 1, _y) > edgeBrStats.BrAvg And
-                                edgeArray(_x - 1, _y) > edgeBrStats.BrAvg Then
+                        If edgeArray(_x + 1, _y) > threshold And
+                                edgeArray(_x - 1, _y) > threshold Then
                             pointList.Add(New PointF(_x, _y))
                             If checkedPoints(_x, _y) = 0 Then
                                 checkedPoints(_x, _y) = 1
@@ -193,7 +246,7 @@ Public Class ImageHandler
 
                     End If
 
-                    If edgeArray(_x, _y) > edgeBrStats.BrAvg Then
+                    If edgeArray(_x, _y) > threshold Then
                         pointList.Add(New PointF(_x, _y))
                         If checkedPoints(_x, _y) = 0 Then
                             checkedPoints(_x, _y) = 1
@@ -202,7 +255,7 @@ Public Class ImageHandler
                     End If
 
                     If _x > 0 Then
-                        If edgeArray(_x - 1, _y) > edgeBrStats.BrAvg Then
+                        If edgeArray(_x - 1, _y) > threshold Then
                             pointList.Add(New PointF(_x - 1, _y))
                             If checkedPoints(_x - 1, _y) = 0 Then
                                 checkedPoints(_x - 1, _y) = 1
@@ -213,7 +266,7 @@ Public Class ImageHandler
                     End If
 
                     If _x < edgeGrayMatrix.Width - 1 Then
-                        If edgeArray(_x + 1, _y) > edgeBrStats.BrAvg Then
+                        If edgeArray(_x + 1, _y) > threshold Then
                             pointList.Add(New PointF(_x + 1, _y))
                             If checkedPoints(_x + 1, _y) = 0 Then
                                 checkedPoints(_x + 1, _y) = 1
@@ -238,14 +291,14 @@ Public Class ImageHandler
                     checkedPoints(Int(point.X), Int(point.Y)) = 2
 
                     For _x = Int(point.X + 1) To edgeGrayMatrix.Width - 1
-                        If edgeArray(_x, Int(point.Y)) > edgeBrStats.BrAvg Then
+                        If edgeArray(_x, Int(point.Y)) > threshold Then
                             checkedPoints(_x, Int(point.Y)) = 2
                         Else : Exit For
                         End If
                     Next _x
 
                     For _x = Int(point.X - 1) To 0 Step -1
-                        If edgeArray(_x, Int(point.Y)) > edgeBrStats.BrAvg Then
+                        If edgeArray(_x, Int(point.Y)) > threshold Then
                             checkedPoints(_x, Int(point.Y)) = 2
                         Else : Exit For
                         End If

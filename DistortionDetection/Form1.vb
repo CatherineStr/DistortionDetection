@@ -40,7 +40,12 @@ Public Class gui_form
 
     Private Sub searchDistortion_btn_Click(sender As Object, e As EventArgs) Handles searchDistortion_btn.Click
         'result_rtb.Text = ""
-        imageHandler.detectDistortions()
+        Dim otsu As Boolean = False, sd As Boolean = True
+        If ComboBox1.SelectedIndex = 1 Then
+            otsu = True
+            sd = False
+        End If
+        imageHandler.detectDistortions(sd, otsu)
     End Sub
 
     Private Sub Save_btn_Click(sender As Object, e As EventArgs) Handles Save_btn.Click
@@ -71,6 +76,7 @@ Public Class gui_form
     End Sub
 
     Private Sub gui_form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ComboBox1.SelectedIndex = 0
         imageHandler = New ImageHandler()
         sourceImg_pb.Image = imageHandler._sourceImg
         lform = New LoggerForm(imageHandler._logger)
