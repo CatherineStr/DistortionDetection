@@ -1,0 +1,9 @@
+[VertLinesDetection]
+maxGapY=5
+lineMinLen=108
+[SD_EdgeDetection]
+pixAreaWidth=2
+[Root]
+maxGapY=5
+lineMinLen=108
+pixAreaWidth=-1

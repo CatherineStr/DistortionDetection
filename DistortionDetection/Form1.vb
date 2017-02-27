@@ -92,6 +92,7 @@ Public Class gui_form
     End Sub
 
     Private Sub Settings_Click(sender As Object, e As EventArgs) Handles Settings.Click
-        sform.Show()
+        imageHandler.showSettings()
+        'sform.Show()
     End Sub
 End Class
