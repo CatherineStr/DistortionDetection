@@ -17,3 +17,6 @@ C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Framework.pdb
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\Bwl.Framework.xml
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.FormSettings.resources
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.xml

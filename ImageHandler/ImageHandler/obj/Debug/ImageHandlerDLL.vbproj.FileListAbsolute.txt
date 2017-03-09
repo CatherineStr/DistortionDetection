@@ -1,0 +1,14 @@
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Framework.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Imaging.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Framework.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Framework.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Imaging.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\Bwl.Imaging.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\obj\Debug\ImageHandlerDLL.vbproj.GenerateResource.Cache
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\ImageHandlerDLL.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\ImageHandlerDLL.pdb
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\bin\Debug\ImageHandlerDLL.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\obj\Debug\ImageHandlerNamespace.Resources.resources
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\obj\Debug\ImageHandlerDLL.dll
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\obj\Debug\ImageHandlerDLL.xml
+C:\Users\Катя\Documents\Projects\DistortionDetection\ImageHandler\ImageHandler\obj\Debug\ImageHandlerDLL.pdb

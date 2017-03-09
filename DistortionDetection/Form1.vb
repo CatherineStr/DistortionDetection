@@ -2,6 +2,8 @@
 Imports System.Threading
 Imports Bwl.Framework
 
+Imports ImageHandlerNamespace
+
 Public Class gui_form
 
     Dim imageHandler As ImageHandler
@@ -19,7 +21,7 @@ Public Class gui_form
 
             If dialog.ShowDialog() = DialogResult.OK Then
                 Try
-                    imageHandler._sourceImg = New Bitmap(dialog.FileName)
+                    imageHandler.SourceImg = New Bitmap(dialog.FileName)
                 Catch
                     MessageBox.Show("Ошибка при попытке открыть файл с заданным именем.", "Ошибка")
                     Return
@@ -28,8 +30,8 @@ Public Class gui_form
         End Using
         Dim db As DisplayBitmap
         Dim dbc As DisplayBitmapControl
-        If imageHandler._sourceImg IsNot Nothing Then
-            db = New DisplayBitmap(imageHandler._sourceImg)
+        If imageHandler.SourceImg IsNot Nothing Then
+            db = New DisplayBitmap(imageHandler.SourceImg)
             dbc = New DisplayBitmapControl()
             dbc.DisplayBitmap = db
             dbc._pictureBox = sourceImg_pb
@@ -53,7 +55,7 @@ Public Class gui_form
             Return
         End If
 
-        If imageHandler._resImg Is Nothing Then
+        If imageHandler.ResImg Is Nothing Then
             MessageBox.Show("Нет данных для сохранения")
             Return
         End If
@@ -62,7 +64,7 @@ Public Class gui_form
             dialog.Title = "Save an Image file"
             If dialog.ShowDialog() = DialogResult.OK Then
                 Try
-                    imageHandler._resImg.Save(dialog.FileName)
+                    imageHandler.ResImg.Save(dialog.FileName)
                 Catch
                     MessageBox.Show("Ошибка при попытке сохранения файла с заданным именем", "Ошибка")
                 End Try
@@ -71,15 +73,15 @@ Public Class gui_form
     End Sub
 
     Private Sub imageHandler_resImgChanged(ByVal sender As Object, ByVal e As EventArgs)
-        resultImg_pb.Image = imageHandler._resImg
+        resultImg_pb.Image = imageHandler.ResImg
 
     End Sub
 
     Private Sub gui_form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ComboBox1.SelectedIndex = 0
         imageHandler = New ImageHandler()
-        sourceImg_pb.Image = imageHandler._sourceImg
-        lform = New LoggerForm(imageHandler._logger)
+        sourceImg_pb.Image = imageHandler.SourceImg
+        lform = New LoggerForm(imageHandler.Logger)
         lform.MdiParent = Me
         lform.Dock = DockStyle.Bottom
         lform.Height = 200
