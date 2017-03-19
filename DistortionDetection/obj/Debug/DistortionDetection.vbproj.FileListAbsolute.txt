@@ -20,3 +20,7 @@ C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\obj
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.dll
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.pdb
 C:\Users\Катя\Documents\Projects\DistortionDetection\DistortionDetection\bin\Debug\ImageHandlerDLL.xml
+C:\Users\Катя\Desktop\Work\DistortionDetection\DistortionDetection\bin\Debug\DistortionDetection.exe.config
+C:\Users\Катя\Desktop\Work\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.exe
+C:\Users\Катя\Desktop\Work\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.xml
+C:\Users\Катя\Desktop\Work\DistortionDetection\DistortionDetection\obj\Debug\DistortionDetection.pdb

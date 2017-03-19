@@ -7,14 +7,26 @@ Imports System.Windows.Forms
 
 Public Class ImageHandler
 
+
     Private _sourceImg As Bitmap = Nothing
     Private _resImg As Bitmap = Nothing
     Private _filters As New Filters
     Private _calcThread As Threading.Thread = Nothing
     Private _logger As New Logger
     Private _grayMatrix As GrayMatrix = Nothing
+    Private _rgbMatrix As RGBMatrix = Nothing
     Private _threshold As Integer = 0
     Private _settingsStorageRoot As SettingsStorageRoot
+
+    Public Enum binarizationMode
+        standartDeviation
+        otsu
+    End Enum
+
+    Public Enum preparingMode
+        noMode
+        medianFIlt
+    End Enum
 
     Public Sub New()
         _settingsStorageRoot = New SettingsStorageRoot
@@ -30,6 +42,9 @@ Public Class ImageHandler
         End Get
         Set(ByVal value As Bitmap)
             _sourceImg = value
+            ResImg = value
+            _grayMatrix = Nothing
+            _rgbMatrix = Nothing
         End Set
     End Property
 
@@ -79,37 +94,34 @@ Public Class ImageHandler
         Return True
     End Function
 
-    Public Sub detectDistortions(sd As Boolean, otsu As Boolean)
+    Public Sub detectDistortions(mode As binarizationMode)
         If Not Me.stopCalculations() Then
             Return
         End If
-        'result_rtb.Text = "";
-        Me.sd = sd
-        Me.ots = otsu
         _calcThread = New Thread(AddressOf calculate)
-        _calcThread.Start()
+        _calcThread.Start(mode)
     End Sub
 
-    Private sd As Boolean
-    Private ots As Boolean
-    Private Sub calculate()
-        Logger.AddMessage("Получение матрицы изображения в оттенках серого")
-        _grayMatrix = BitmapConverter.BitmapToGrayMatrix(SourceImg)
-
-
-        Logger.AddMessage("Обнаружение границ")
-        Dim edgeGrayMatrix As GrayMatrix
-        If ots Then
-            edgeGrayMatrix = otsu()
-            'Else : edgeGrayMatrix = detectEdges(grayMatrix, CInt(inifile.GetSetting("SD_EdgeDetection", "pixAreaWidth", "2", "2"))) ' My.Settings.pixAreaWidth)
-
-        Else
-            If CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString()) < 0 Then
-                Logger.AddError("Некорректное значение параметра lineMinLen. Оно должно быть неотрицательным. Вычисления прерваны.")
-                Return
-            End If
-            edgeGrayMatrix = detectEdges(_grayMatrix, CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString()))
+    Private Sub calculate(mode As binarizationMode)
+        If IsNothing(_grayMatrix) Then
+            Logger.AddMessage("Получение матрицы изображения в оттенках серого")
+            _grayMatrix = BitmapConverter.BitmapToGrayMatrix(ResImg)
         End If
+
+
+        Dim edgeGrayMatrix As GrayMatrix
+        Select Case mode
+            Case binarizationMode.otsu
+                Logger.AddMessage("Бинаризация метотодом Otsu")
+                edgeGrayMatrix = otsu()
+            Case binarizationMode.standartDeviation
+                If CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString()) < 0 Then
+                    Logger.AddError("Некорректное значение параметра pixAreaWidth. Оно должно быть неотрицательным. Вычисления прерваны.")
+                    Return
+                End If
+                Logger.AddMessage("Обнаружение границ при помощи СКО")
+                edgeGrayMatrix = detectEdges(_grayMatrix, CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString()))
+        End Select
         ResImg = edgeGrayMatrix.ToRGBMatrix.ToBitmap
 
         Logger.AddMessage("Поиск вертикальных линий")
@@ -412,6 +424,127 @@ Public Class ImageHandler
 
         Return CDbl(maxDistToStraight)
     End Function
+
+    Public Sub prepareImage(mode As preparingMode)
+        If Not stopCalculations() Then
+            Return
+        End If
+
+        Select Case mode
+            Case preparingMode.noMode
+                ResImg = SourceImg
+            Case preparingMode.medianFIlt
+                _calcThread = New Thread(AddressOf applyMedianFilter)
+                _calcThread.Start()
+        End Select
+    End Sub
+
+    Private Sub applyMedianFilter()
+        If IsNothing(SourceImg) Then
+            Logger.AddError("Отсутствует исходное изображение. Вычисления прерваны.")
+            Return
+        End If
+        Dim pixAreaWidth = CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString())
+        If pixAreaWidth < 0 Then
+            Logger.AddError("Некорректное значение параметра pixAreaWidth. Оно должно быть неотрицательным. Вычисления прерваны.")
+            Return
+        End If
+
+        If IsNothing(_grayMatrix) Then
+            Logger.AddMessage("Получение матрицы изображения в оттенках серого")
+            _grayMatrix = BitmapConverter.BitmapToGrayMatrix(SourceImg)
+            Logger.AddMessage("Матрица получена")
+        End If
+        If IsNothing(_rgbMatrix) Then
+            Logger.AddMessage("Получение RGB матрицы изображения")
+            _rgbMatrix = BitmapConverter.BitmapToRGBMatrix(SourceImg)
+            Logger.AddMessage("Матрица получена")
+        End If
+        Dim sourceRGBMatrix = _rgbMatrix
+        Dim resRGBMatrix = _rgbMatrix
+
+        Logger.AddMessage("Применение медианного фильтра")
+        For y As Integer = 0 To _grayMatrix.Height - 1
+            For x As Integer = 0 To _grayMatrix.Width - 1
+                Dim numElem = (Math.Min(y + pixAreaWidth, _grayMatrix.Height) - Math.Max(0, y - pixAreaWidth))
+                numElem *= (Math.Min(x + pixAreaWidth, _grayMatrix.Width) - Math.Max(0, x - pixAreaWidth))
+                Dim neighbours(numElem) As Byte
+                Dim points(numElem) As Point
+                Dim neighbour As Integer = 0
+
+                For _y As Integer = Math.Max(0, y - pixAreaWidth) To Math.Min(y + pixAreaWidth - 1, _grayMatrix.Height - 1)
+                    For _x As Integer = Math.Max(0, x - pixAreaWidth) To Math.Min(x + pixAreaWidth - 1, _grayMatrix.Width - 1)
+                        neighbours(neighbour) = _grayMatrix.Gray(_x, _y)
+                        points(neighbour) = New Point(_x, _y)
+                        neighbour += 1
+                    Next _x
+                Next _y
+                Array.Sort(neighbours, points)
+
+                resRGBMatrix.Red(x, y) = sourceRGBMatrix.Red(points(numElem \ 2).X, points(numElem \ 2).Y)
+                resRGBMatrix.Green(x, y) = sourceRGBMatrix.Green(points(numElem \ 2).X, points(numElem \ 2).Y)
+                resRGBMatrix.Blue(x, y) = sourceRGBMatrix.Blue(points(numElem \ 2).X, points(numElem \ 2).Y)
+            Next x
+        Next y
+        Logger.AddMessage("Формирование нового изображения")
+        ResImg = resRGBMatrix.ToBitmap()
+        Logger.AddMessage("Вычисления завершены")
+
+    End Sub
+
+    'Private Function getBytePixArea(x_coord As UInteger, y_coord As UInteger, Optional matrix As Byte(,) = Nothing) As UInteger()(,)
+    '    Dim pixAreaWidth = CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString())
+    '    If pixAreaWidth < 0 Then
+    '        Logger.AddError("Некорректное значение параметра pixAreaWidth. Оно должно быть неотрицательным. Вычисления прерваны.")
+    '        Return Nothing
+    '    End If
+    '    If IsNothing(matrix) Then
+    '        If IsNothing(_grayMatrix) Then
+    '            Logger.AddMessage("Получение матрицы изображения в оттенках серого")
+    '            _grayMatrix = BitmapConverter.BitmapToGrayMatrix(SourceImg)
+    '            Logger.AddMessage("Матрица получена")
+    '        End If
+    '        matrix = _grayMatrix.Gray
+    '    End If
+
+    '    Dim numElem = Math.Pow(pixAreaWidth * 2 + 1, 2)
+    '    Dim neighbours(numElem)(,) As UInteger
+    '    Dim neighbour As Integer = 0
+
+    '    For y As Integer = Math.Max(0, y_coord - pixAreaWidth) To Math.Min(y_coord + pixAreaWidth - 1, matrix.GetLength(1) - 1)
+    '        For x As Integer = Math.Max(0, x_coord - pixAreaWidth) To Math.Min(x_coord + pixAreaWidth - 1, matrix.GetLength(0) - 1)
+    '            neighbours(neighbour) = CByte(matrix(x, y))
+    '            neighbour += 1
+    '        Next x
+    '    Next y
+    '    Return neighbours
+    'End Function
+
+    'Private Function getColorPixArea(x_coord As UInteger, y_coord As UInteger, Optional matrix As Bitmap = Nothing) As Color()
+    '    Dim pixAreaWidth = CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString())
+    '    If pixAreaWidth < 0 Then
+    '        Logger.AddError("Некорректное значение параметра pixAreaWidth. Оно должно быть неотрицательным. Вычисления прерваны.")
+    '        Return Nothing
+    '    End If
+    '    If IsNothing(matrix) Then
+    '        If IsNothing(SourceImg) Then
+    '            Logger.AddError("Отсутствует исходное изображение. Вычисления прерваны.")
+    '            Return Nothing
+    '        End If
+    '        matrix = SourceImg
+    '    End If
+
+    '    Dim neighbours(Math.Pow(pixAreaWidth * 2 + 1, 2)) As Color
+    '    Dim neighbour As Integer = 0
+
+    '    For y As Integer = Math.Max(0, y_coord - pixAreaWidth) To Math.Min(y_coord + pixAreaWidth - 1, matrix.Height - 1)
+    '        For x As Integer = Math.Max(0, x_coord - pixAreaWidth) To Math.Min(x_coord + pixAreaWidth - 1, matrix.Width - 1)
+    '            neighbours(neighbour) = matrix.GetPixel(x, y)
+    '            neighbour += 1
+    '        Next x
+    '    Next y
+    '    Return neighbours
+    'End Function
 
 End Class
 

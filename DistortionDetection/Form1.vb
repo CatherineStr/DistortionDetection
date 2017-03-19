@@ -47,7 +47,15 @@ Public Class gui_form
             otsu = True
             sd = False
         End If
-        imageHandler.detectDistortions(sd, otsu)
+        Dim mode As ImageHandler.binarizationMode
+        Select Case ComboBox1.SelectedIndex
+            Case 0
+                mode = ImageHandlerNamespace.ImageHandler.binarizationMode.standartDeviation
+            Case 1
+                mode = ImageHandlerNamespace.ImageHandler.binarizationMode.otsu
+        End Select
+
+        imageHandler.detectDistortions(mode)
     End Sub
 
     Private Sub Save_btn_Click(sender As Object, e As EventArgs) Handles Save_btn.Click
@@ -96,5 +104,17 @@ Public Class gui_form
     Private Sub Settings_Click(sender As Object, e As EventArgs) Handles Settings.Click
         imageHandler.showSettings()
         'sform.Show()
+    End Sub
+
+
+    Private Sub prepareImage_cb_SelectedIndexChanged(sender As Object, e As EventArgs) Handles prepareImage_cb.SelectedIndexChanged
+        Dim mode As ImageHandler.preparingMode
+        Select Case prepareImage_cb.SelectedIndex
+            Case 0
+                mode = ImageHandlerNamespace.ImageHandler.preparingMode.noMode
+            Case 1
+                mode = ImageHandlerNamespace.ImageHandler.preparingMode.medianFIlt
+        End Select
+        imageHandler.prepareImage(mode)
     End Sub
 End Class

@@ -29,6 +29,9 @@ Partial Class gui_form
         Me.loadImage_btn = New System.Windows.Forms.Button()
         Me.Settings = New System.Windows.Forms.Button()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
+        Me.prepareImage_cb = New System.Windows.Forms.ComboBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -69,7 +72,7 @@ Partial Class gui_form
         'searchDistortion_btn
         '
         Me.searchDistortion_btn.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.searchDistortion_btn.Location = New System.Drawing.Point(590, 11)
+        Me.searchDistortion_btn.Location = New System.Drawing.Point(829, 13)
         Me.searchDistortion_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.searchDistortion_btn.Name = "searchDistortion_btn"
         Me.searchDistortion_btn.Size = New System.Drawing.Size(161, 41)
@@ -91,7 +94,7 @@ Partial Class gui_form
         'Settings
         '
         Me.Settings.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.Settings.Location = New System.Drawing.Point(252, 11)
+        Me.Settings.Location = New System.Drawing.Point(182, 13)
         Me.Settings.Margin = New System.Windows.Forms.Padding(4)
         Me.Settings.Name = "Settings"
         Me.Settings.Size = New System.Drawing.Size(161, 41)
@@ -103,16 +106,50 @@ Partial Class gui_form
         '
         Me.ComboBox1.FormattingEnabled = True
         Me.ComboBox1.Items.AddRange(New Object() {"Выделение границ: СКО", "Бинаризация: Метод Otsu "})
-        Me.ComboBox1.Location = New System.Drawing.Point(420, 11)
+        Me.ComboBox1.Location = New System.Drawing.Point(590, 24)
         Me.ComboBox1.Name = "ComboBox1"
         Me.ComboBox1.Size = New System.Drawing.Size(163, 21)
         Me.ComboBox1.TabIndex = 18
+        '
+        'prepareImage_cb
+        '
+        Me.prepareImage_cb.FormattingEnabled = True
+        Me.prepareImage_cb.Items.AddRange(New Object() {"Нет", "Медианный фильтр"})
+        Me.prepareImage_cb.Location = New System.Drawing.Point(419, 24)
+        Me.prepareImage_cb.Name = "prepareImage_cb"
+        Me.prepareImage_cb.Size = New System.Drawing.Size(163, 21)
+        Me.prepareImage_cb.TabIndex = 20
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.BackColor = System.Drawing.SystemColors.AppWorkspace
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.Label1.Location = New System.Drawing.Point(453, 9)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(99, 15)
+        Me.Label1.TabIndex = 21
+        Me.Label1.Text = "Предобработка"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.BackColor = System.Drawing.SystemColors.AppWorkspace
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.Label2.Location = New System.Drawing.Point(621, 9)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(84, 15)
+        Me.Label2.TabIndex = 22
+        Me.Label2.Text = "Бинаризация"
         '
         'gui_form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1172, 703)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.prepareImage_cb)
         Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.Settings)
         Me.Controls.Add(Me.Save_btn)
@@ -126,6 +163,7 @@ Partial Class gui_form
         CType(Me.resultImg_pb, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.sourceImg_pb, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Private WithEvents resultImg_pb As System.Windows.Forms.PictureBox
@@ -135,5 +173,8 @@ Partial Class gui_form
     Private WithEvents loadImage_btn As System.Windows.Forms.Button
     Private WithEvents Settings As System.Windows.Forms.Button
     Friend WithEvents ComboBox1 As System.Windows.Forms.ComboBox
+    Friend WithEvents prepareImage_cb As System.Windows.Forms.ComboBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
 
 End Class
