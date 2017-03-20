@@ -26,6 +26,7 @@ Public Class ImageHandler
     Public Enum preparingMode
         noMode
         medianFIlt
+        matrixFilt
     End Enum
 
     Public Sub New()
@@ -425,7 +426,7 @@ Public Class ImageHandler
         Return CDbl(maxDistToStraight)
     End Function
 
-    Public Sub prepareImage(mode As preparingMode)
+    Public Sub prepareImage(mode As preparingMode, Optional mask As Single(,) = Nothing)
         If Not stopCalculations() Then
             Return
         End If
@@ -436,6 +437,9 @@ Public Class ImageHandler
             Case preparingMode.medianFIlt
                 _calcThread = New Thread(AddressOf applyMedianFilter)
                 _calcThread.Start()
+            Case preparingMode.matrixFilt
+                _calcThread = New Thread(AddressOf applyMatrixFilter)
+                _calcThread.Start(mask)
         End Select
     End Sub
 
@@ -490,6 +494,65 @@ Public Class ImageHandler
         ResImg = resRGBMatrix.ToBitmap()
         Logger.AddMessage("Вычисления завершены")
 
+    End Sub
+
+    Private Sub applyMatrixFilter(mask As Single(,))
+        If IsNothing(SourceImg) Then
+            Logger.AddError("Отсутствует исходное изображение. Вычисления прерваны.")
+            Return
+        End If
+        If IsNothing(mask) Then
+            Logger.AddError("Не задана маска фильтра. Вычисления прерваны.")
+            Return
+        End If
+        Dim pixAreaWidth = CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString())
+        If pixAreaWidth < 0 Then
+            Logger.AddError("Некорректное значение параметра pixAreaWidth. Оно должно быть неотрицательным. Вычисления прерваны.")
+            Return
+        End If
+
+        If mask.GetLength(0) <> pixAreaWidth * 2 + 1 Or mask.GetLength(1) <> pixAreaWidth * 2 + 1 Then
+            Logger.AddError("Размер матрицы " + CStr(mask.GetLength(0)) + " x " + CStr(mask.GetLength(1)) + " а должен быть " + CStr(pixAreaWidth * 2) + " x " + CStr(pixAreaWidth * 2) + ". Вычисления прерваны.")
+            Return
+        End If
+
+
+        If IsNothing(_rgbMatrix) Then
+            Logger.AddMessage("Получение RGB матрицы изображения")
+            _rgbMatrix = BitmapConverter.BitmapToRGBMatrix(SourceImg)
+            Logger.AddMessage("Матрица получена")
+        End If
+        Dim sourceRGBMatrix = _rgbMatrix
+        Dim resRGBMatrix = _rgbMatrix
+
+        Logger.AddMessage("Применение матричного фильтра")
+        For y As Integer = 0 To _grayMatrix.Height - 1
+            For x As Integer = 0 To _grayMatrix.Width - 1
+                Dim numElem = (Math.Min(y + pixAreaWidth, _grayMatrix.Height) - Math.Max(0, y - pixAreaWidth))
+                numElem *= (Math.Min(x + pixAreaWidth, _grayMatrix.Width) - Math.Max(0, x - pixAreaWidth))
+                Dim r As Single = 0, g As Single = 0, b As Single = 0
+                'Dim neighbours(numElem) As Byte
+                'Dim points(numElem) As Point
+                'Dim neighbour As Integer = 0
+                'If y - pixAreaWidth < 0 Then
+                'End If
+
+                For _y As Integer = Math.Max(0, y - pixAreaWidth) To Math.Min(y + pixAreaWidth - 1, _grayMatrix.Height - 1)
+                    For _x As Integer = Math.Max(0, x - pixAreaWidth) To Math.Min(x + pixAreaWidth - 1, _grayMatrix.Width - 1)
+                        r += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Red(_x, _y)
+                        g += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Green(_x, _y)
+                        b += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Blue(_x, _y)
+                    Next _x
+                Next _y
+
+                resRGBMatrix.Red(x, y) = CByte(Math.Max(Math.Min(r, CSng(Byte.MaxValue)), CSng(Byte.MinValue)))
+                resRGBMatrix.Green(x, y) = CByte(Math.Max(Math.Min(g, CSng(Byte.MaxValue)), CSng(Byte.MinValue)))
+                resRGBMatrix.Blue(x, y) = CByte(Math.Max(Math.Min(b, CSng(Byte.MaxValue)), CSng(Byte.MinValue)))
+            Next x
+        Next y
+        Logger.AddMessage("Формирование нового изображения")
+        ResImg = resRGBMatrix.ToBitmap()
+        Logger.AddMessage("Вычисления завершены")
     End Sub
 
     'Private Function getBytePixArea(x_coord As UInteger, y_coord As UInteger, Optional matrix As Byte(,) = Nothing) As UInteger()(,)
