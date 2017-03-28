@@ -114,7 +114,7 @@ Partial Class gui_form
         'prepareImage_cb
         '
         Me.prepareImage_cb.FormattingEnabled = True
-        Me.prepareImage_cb.Items.AddRange(New Object() {"Нет", "Медианный фильтр"})
+        Me.prepareImage_cb.Items.AddRange(New Object() {"Нет", "Медианный фильтр", "Матричный фильтр"})
         Me.prepareImage_cb.Location = New System.Drawing.Point(419, 24)
         Me.prepareImage_cb.Name = "prepareImage_cb"
         Me.prepareImage_cb.Size = New System.Drawing.Size(163, 21)

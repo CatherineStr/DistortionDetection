@@ -9,6 +9,7 @@ Public Class gui_form
     Dim imageHandler As ImageHandler
     Dim lform As LoggerForm
     Dim sform As FormSettings
+    Dim mform As MatrixForm
 
     Private Sub loadImage_btn_Click(sender As Object, e As EventArgs) Handles loadImage_btn.Click
         If Not imageHandler.stopCalculations() Then
@@ -96,8 +97,9 @@ Public Class gui_form
         lform.FormBorderStyle = FormBorderStyle.None
         lform.Show()
         sform = New FormSettings()
-
+        mform = New MatrixForm()
         AddHandler imageHandler.resImgChanged, AddressOf imageHandler_resImgChanged
+        mform.ImHandler = imageHandler
 
     End Sub
 
@@ -114,6 +116,37 @@ Public Class gui_form
                 mode = ImageHandlerNamespace.ImageHandler.preparingMode.noMode
             Case 1
                 mode = ImageHandlerNamespace.ImageHandler.preparingMode.medianFIlt
+            Case 2
+                mode = ImageHandlerNamespace.ImageHandler.preparingMode.matrixFilt
+                Dim rank = Math.Max(imageHandler.PixAreaWidth, 0) * 2 + 1
+                mform.matrixDataGrid.Rows.Clear()
+                mform.matrixDataGrid.Columns.Clear()
+                'Dim columns() = New DataGridViewColumn(rank) {}
+                'columns.Initialize()
+                'mform.matrixDataGrid.Columns.AddRange(columns)
+
+                Dim cells(rank - 1)() As DataGridViewCell
+                For i As Integer = 0 To rank - 1
+                    Dim column As New DataGridViewColumn()
+                    column.DefaultCellStyle = mform.matrixDataGrid.DefaultCellStyle
+                    column.ValueType = System.Type.GetType("Single")
+                    column.Name = "x" + CStr(i)
+                    mform.matrixDataGrid.Columns.Add(column)
+                    cells(i) = New DataGridViewTextBoxCell(rank - 1) {}
+                    For j As Integer = 0 To rank - 1
+                        cells(i)(j) = New DataGridViewTextBoxCell()
+                        cells(i)(j).ValueType = System.Type.GetType("Single")
+                        cells(i)(j).Style = mform.matrixDataGrid.DefaultCellStyle
+                        cells(i)(j).Value = 0
+                    Next j
+                Next i
+                For i As Integer = 0 To rank - 1
+                    Dim row As New DataGridViewRow()
+                    row.Cells.AddRange(cells(i))
+                    mform.matrixDataGrid.Rows.Add(row)
+                Next i
+                mform.Show()
+                Return
         End Select
         imageHandler.prepareImage(mode)
     End Sub

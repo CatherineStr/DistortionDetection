@@ -67,6 +67,12 @@ Public Class ImageHandler
         End Get
     End Property
 
+    Public ReadOnly Property PixAreaWidth As Integer
+        Get
+            Return CInt(_settingsStorageRoot.FindSetting("pixAreaWidth").ValueAsString())
+        End Get
+    End Property
+
     Private Sub OnResImgChanged(ByVal e As EventArgs)
         Dim handler As EventHandler = resImgChangedEvent
         If handler IsNot Nothing Then
@@ -526,10 +532,10 @@ Public Class ImageHandler
         Dim resRGBMatrix = _rgbMatrix
 
         Logger.AddMessage("Применение матричного фильтра")
-        For y As Integer = 0 To _grayMatrix.Height - 1
-            For x As Integer = 0 To _grayMatrix.Width - 1
-                Dim numElem = (Math.Min(y + pixAreaWidth, _grayMatrix.Height) - Math.Max(0, y - pixAreaWidth))
-                numElem *= (Math.Min(x + pixAreaWidth, _grayMatrix.Width) - Math.Max(0, x - pixAreaWidth))
+        For y As Integer = 0 To _rgbMatrix.Height - 1
+            For x As Integer = 0 To _rgbMatrix.Width - 1
+                Dim numElem = (Math.Min(y + pixAreaWidth, _rgbMatrix.Height) - Math.Max(0, y - pixAreaWidth))
+                numElem *= (Math.Min(x + pixAreaWidth, _rgbMatrix.Width) - Math.Max(0, x - pixAreaWidth))
                 Dim r As Single = 0, g As Single = 0, b As Single = 0
                 'Dim neighbours(numElem) As Byte
                 'Dim points(numElem) As Point
@@ -537,8 +543,8 @@ Public Class ImageHandler
                 'If y - pixAreaWidth < 0 Then
                 'End If
 
-                For _y As Integer = Math.Max(0, y - pixAreaWidth) To Math.Min(y + pixAreaWidth - 1, _grayMatrix.Height - 1)
-                    For _x As Integer = Math.Max(0, x - pixAreaWidth) To Math.Min(x + pixAreaWidth - 1, _grayMatrix.Width - 1)
+                For _y As Integer = Math.Max(0, y - pixAreaWidth) To Math.Min(y + pixAreaWidth - 1, _rgbMatrix.Height - 1)
+                    For _x As Integer = Math.Max(0, x - pixAreaWidth) To Math.Min(x + pixAreaWidth - 1, _rgbMatrix.Width - 1)
                         r += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Red(_x, _y)
                         g += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Green(_x, _y)
                         b += mask(x - _x + pixAreaWidth, y - _y + pixAreaWidth) * sourceRGBMatrix.Blue(_x, _y)
